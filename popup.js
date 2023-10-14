@@ -2,6 +2,7 @@ const tabs = await chrome.tabs.query({
     url: [
         'https://developer.chrome.com/docs/webstore/*',
         'https://developer.chrome.com/docs/extensions/*',
+        'https://www.youtube.com/*',
     ],
 });
 
@@ -12,6 +13,7 @@ const template = document.getElementById('li_template');
 const elements = new Set();
 
 for (const tab of tabs) {
+    console.log(tab.id);
     const element = template.content.firstElementChild.cloneNode(true);
 
     const title = tab.title.split('-')[0].trim();
@@ -29,3 +31,10 @@ for (const tab of tabs) {
 }
 
 document.querySelector('ul').append(...elements);
+
+const button = document.querySelector('button');
+button.addEventListener('click', async () => {
+    const tabIds = tabs.map(({ id }) => id);
+    const group = await chrome.tabs.group({ tabIds });
+    await chrome.tabGroups.update(group, { title: 'DOCS' });
+});
